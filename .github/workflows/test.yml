@@ -1,6 +1,9 @@
 name: Lint and test
 
-on: [push, pull_request]
+on:
+  - push
+  - pull_request
+  - release: {types: [created]}
 
 jobs:
   build:

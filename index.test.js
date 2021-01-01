@@ -1,5 +1,4 @@
-const { interpret } = require('xstate');
-const { memberMachine } = require('.');
+const { memberMachine, memberService } = require('.');
 
 describe('memberMachine', () => {
   for (const [state, action, match] of [
@@ -30,7 +29,7 @@ describe('memberMachine', () => {
 
   describe('interpreted machine', () => {
     const run = (fn, state) => {
-      const svc = interpret(memberMachine);
+      const svc = memberService();
       const states = [];
       svc.onTransition(tState => states.push(tState));
       svc.start(state);

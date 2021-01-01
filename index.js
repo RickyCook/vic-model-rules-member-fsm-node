@@ -1,4 +1,4 @@
-const { createMachine } = require('xstate');
+const { createMachine, interpret } = require('xstate');
 
 exports.memberDef = {
   id: 'member',
@@ -92,3 +92,4 @@ exports.memberDef = {
 };
 
 exports.memberMachine = createMachine(exports.memberDef);
+exports.memberService = () => interpret(exports.memberMachine);

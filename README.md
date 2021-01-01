@@ -17,10 +17,9 @@ them to get the current state. In the following example, the string arguments
 to `svc.send` are the ordered logs.
 
 ```js
-const { interpret } = require('xstate');
-const { memberMachine } = require('vic-model-rules-member-fsm');
+const { memberService } = require('vic-model-rules-member-fsm');
 
-const svc = interpret(memberMachine);
+const svc = memberService();
 svc.start();
 
 svc.send('SUBMIT_APPLICATION');
@@ -51,7 +50,7 @@ application process again). This is enabled via the `BEGIN_MEMBERSHIP_PERIOD`
 actions, and the `lapsedMember` state:
 
 ```js
-const svc = interpret(memberMachine);
+const svc = memberService();
 svc.start('member');  // force-start the machine in the member state
 
 svc.send('BEGIN_MEMBERSHIP_PERIOD');

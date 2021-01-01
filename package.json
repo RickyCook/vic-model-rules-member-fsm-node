@@ -1,0 +1,21 @@
+{
+  "name": "vic-model-rules-member-fsm",
+  "version": "1.0.0",
+  "description": "Finite state machine for member state according to Victorian model rules",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "author": "Ricky Cook <npm@auto.thatpanda.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^6.4.0",
+    "eslint-config-dutyofcare": "github:BlueBikeSolutions/eslint-config-dutyofcare",
+    "eslint-plugin-import": "^2.22.1",
+    "jest": "^26.6.3"
+  },
+  "dependencies": {
+    "xstate": "^4.15.3"
+  }
+}

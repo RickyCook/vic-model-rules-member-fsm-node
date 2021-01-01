@@ -1,3 +1,4 @@
+const { interpret } = require('xstate');
 const { memberMachine } = require('.');
 
 describe('memberMachine', () => {
@@ -26,4 +27,84 @@ describe('memberMachine', () => {
       expect(s.matches(match)).toBe(true);
     });
   }
+
+  describe('interpreted machine', () => {
+    const run = (fn, state) => {
+      const svc = interpret(memberMachine);
+      const states = [];
+      svc.onTransition(state => states.push(state))
+      svc.start(state);
+      fn(svc);
+      svc.stop();
+      return states;
+    }
+    const runTest = (fn, exp, state) => {
+      const states = run(fn, state);
+      expect(states.length).toBe(exp.length);
+      for (let idx = 0; idx < exp.length; idx++) {
+        const s = states[idx];
+        const e = exp[idx];
+        expect(s.matches(e)).toBe(true);
+      }
+    }
+    test('becoming a member', () => {
+      runTest(
+        svc => {
+          svc.send('SUBMIT_APPLICATION');
+          svc.send('PAY');
+          svc.send('RAISE');
+          svc.send('APPROVE');
+        },
+        [
+          'noMember',
+          { applied: 'unstartedAndUnpaid' },
+          { applied: 'unstartedAndPaid' },
+          { applied: 'raisedAndPaid' },
+          'member',
+        ]
+      );
+    });
+    test('expelling a member', () => {
+      runTest(
+        svc => {
+          svc.send('EXPEL');
+        },
+        [
+          'member',
+          'expelled',
+        ],
+        'member',
+      );
+    });
+    test('member to lapsed to resigned', () => {
+      runTest(
+        svc => {
+          svc.send('BEGIN_MEMBERSHIP_PERIOD');
+          svc.send('BEGIN_MEMBERSHIP_PERIOD');
+        },
+        [
+          'member',
+          'lapsedMember',
+          'resigned',
+        ],
+        'member',
+      );
+    });
+    test('member to lapsed to member', () => {
+      runTest(
+        svc => {
+          svc.send('BEGIN_MEMBERSHIP_PERIOD');
+          svc.send('PAY');
+          svc.send('BEGIN_MEMBERSHIP_PERIOD');
+        },
+        [
+          'member',
+          'lapsedMember',
+          'member',
+          'lapsedMember',
+        ],
+        'member',
+      );
+    });
+  });
 });

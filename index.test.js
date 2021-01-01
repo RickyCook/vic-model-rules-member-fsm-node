@@ -32,12 +32,12 @@ describe('memberMachine', () => {
     const run = (fn, state) => {
       const svc = interpret(memberMachine);
       const states = [];
-      svc.onTransition(state => states.push(state))
+      svc.onTransition(tState => states.push(tState));
       svc.start(state);
       fn(svc);
       svc.stop();
       return states;
-    }
+    };
     const runTest = (fn, exp, state) => {
       const states = run(fn, state);
       expect(states.length).toBe(exp.length);
@@ -46,7 +46,7 @@ describe('memberMachine', () => {
         const e = exp[idx];
         expect(s.matches(e)).toBe(true);
       }
-    }
+    };
     test('becoming a member', () => {
       runTest(
         svc => {
@@ -61,7 +61,7 @@ describe('memberMachine', () => {
           { applied: 'unstartedAndPaid' },
           { applied: 'raisedAndPaid' },
           'member',
-        ]
+        ],
       );
     });
     test('expelling a member', () => {

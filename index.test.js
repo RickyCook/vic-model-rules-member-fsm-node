@@ -2,12 +2,12 @@ const { memberMachine, memberService } = require('.');
 
 describe('memberMachine', () => {
   for (const [state, action, match] of [
-    ['noMember', 'SUBMIT_APPLICATION', { applied: 'unstartedAndUnpaid' }],
-    ['applied.unstartedAndUnpaid', 'PAY', { applied: 'unstartedAndPaid' }],
-    ['applied.unstartedAndUnpaid', 'RAISE', { applied: 'raisedAndUnpaid' }],
+    ['noMember', 'SUBMIT_APPLICATION', 'applied.unstartedAndUnpaid'],
+    ['applied.unstartedAndUnpaid', 'PAY', 'applied.unstartedAndPaid'],
+    ['applied.unstartedAndUnpaid', 'RAISE', 'applied.raisedAndUnpaid'],
     ['applied.raisedAndUnpaid', 'APPROVE', 'paymentPending'],
     ['applied.raisedAndUnpaid', 'REJECT', 'noMember'],
-    ['applied.unstartedAndPaid', 'RAISE', { applied: 'raisedAndPaid' }],
+    ['applied.unstartedAndPaid', 'RAISE', 'applied.raisedAndPaid'],
     ['applied.raisedAndPaid', 'APPROVE', 'member'],
     ['applied.raisedAndPaid', 'REJECT', 'refundPending'],
     ['refundPending', 'REFUND', 'noMember'],
@@ -19,7 +19,7 @@ describe('memberMachine', () => {
     ['lapsedMember', 'RESIGN', 'resigned'],
     ['lapsedMember', 'BEGIN_MEMBERSHIP_PERIOD', 'resigned'],
     ['lapsedMember', 'PAY', 'member'],
-    ['resigned', 'SUBMIT_APPLICATION', { applied: 'unstartedAndUnpaid' }],
+    ['resigned', 'SUBMIT_APPLICATION', 'applied.unstartedAndUnpaid'],
   ]) {
     test(`${state} allows ${action}`, () => {
       const s = memberMachine.transition(state, action);
@@ -56,9 +56,9 @@ describe('memberMachine', () => {
         },
         [
           'noMember',
-          { applied: 'unstartedAndUnpaid' },
-          { applied: 'unstartedAndPaid' },
-          { applied: 'raisedAndPaid' },
+          'applied.unstartedAndUnpaid',
+          'applied.unstartedAndPaid',
+          'applied.raisedAndPaid',
           'member',
         ],
       );

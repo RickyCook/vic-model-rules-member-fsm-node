@@ -5,8 +5,20 @@ exports.memberDef = {
   initial: 'noMember',
   states: {
     noMember: {
-      on: {
-        SUBMIT_APPLICATION: 'applied',
+      initial: 'unpaid',
+      states: {
+        unpaid: {
+          on: {
+            SUBMIT_APPLICATION: '#member.applied.unstartedAndUnpaid',
+            PAY: 'paid',
+          },
+        },
+        paid: {
+          on: {
+            SUBMIT_APPLICATION: '#member.applied.unstartedAndPaid',
+            RESCIND: '#member.refundPending',
+          },
+        },
       },
     },
     applied: {
@@ -31,7 +43,7 @@ exports.memberDef = {
         },
         rejectedAndUnpaid: {
           // on: { '': '#member.noMember' },
-          always: '#member.noMember',
+          always: '#member.noMember.unpaid',
         },
         unstartedAndPaid: {
           on: {
@@ -56,7 +68,7 @@ exports.memberDef = {
     },
     refundPending: {
       on: {
-        REFUND: 'noMember',
+        REFUND: 'noMember.unpaid',
       },
     },
     paymentPending: {

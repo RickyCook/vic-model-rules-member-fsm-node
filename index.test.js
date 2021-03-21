@@ -2,15 +2,18 @@ const { memberMachine, memberService } = require('.');
 
 describe('memberMachine', () => {
   for (const [state, action, match] of [
-    ['noMember', 'SUBMIT_APPLICATION', 'applied.unstartedAndUnpaid'],
+    ['noMember.unpaid', 'SUBMIT_APPLICATION', 'applied.unstartedAndUnpaid'],
+    ['noMember.paid', 'SUBMIT_APPLICATION', 'applied.unstartedAndPaid'],
+    ['noMember.unpaid', 'PAY', 'noMember.paid'],
+    ['noMember.paid', 'RESCIND', 'refundPending'],
     ['applied.unstartedAndUnpaid', 'PAY', 'applied.unstartedAndPaid'],
     ['applied.unstartedAndUnpaid', 'RAISE', 'applied.raisedAndUnpaid'],
     ['applied.raisedAndUnpaid', 'APPROVE', 'paymentPending'],
-    ['applied.raisedAndUnpaid', 'REJECT', 'noMember'],
+    ['applied.raisedAndUnpaid', 'REJECT', 'noMember.unpaid'],
     ['applied.unstartedAndPaid', 'RAISE', 'applied.raisedAndPaid'],
     ['applied.raisedAndPaid', 'APPROVE', 'member'],
     ['applied.raisedAndPaid', 'REJECT', 'refundPending'],
-    ['refundPending', 'REFUND', 'noMember'],
+    ['refundPending', 'REFUND', 'noMember.unpaid'],
     ['paymentPending', 'PAY', 'member'],
     ['member', 'EXPEL', 'expelled'],
     ['member', 'RESIGN', 'resigned'],
@@ -55,8 +58,25 @@ describe('memberMachine', () => {
           svc.send('APPROVE');
         },
         [
-          'noMember',
+          'noMember.unpaid',
           'applied.unstartedAndUnpaid',
+          'applied.unstartedAndPaid',
+          'applied.raisedAndPaid',
+          'member',
+        ],
+      );
+    });
+    test('pay before apply', () => {
+      runTest(
+        svc => {
+          svc.send('PAY');
+          svc.send('SUBMIT_APPLICATION');
+          svc.send('RAISE');
+          svc.send('APPROVE');
+        },
+        [
+          'noMember.unpaid',
+          'noMember.paid',
           'applied.unstartedAndPaid',
           'applied.raisedAndPaid',
           'member',

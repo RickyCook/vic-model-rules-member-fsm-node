@@ -1,6 +1,6 @@
 {
   "name": "vic-model-rules-member-fsm",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Finite state machine for member state according to Victorian model rules",
   "main": "index.js",
   "scripts": {
